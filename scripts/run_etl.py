@@ -113,7 +113,6 @@ def main():
     
     print(f"DWH Connection String: {dwh_connection_string}")
     load_to_dwh(final_merged_data, dwh_connection_string, table_name="final_data")
-    print(os.path.exists(dwh_connection_string))
     
 
 
