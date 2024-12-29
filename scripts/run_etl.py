@@ -3,6 +3,7 @@ from transform.clean_data import clean_data
 from extract.reads_local_files import customers, order_items, payments, orders, sellers, products
 from transform.join_datasets import join_datasets
 from load.save_to_csv import save_to_csv
+from load.load_to_dwh import load_to_dwh
 
 def main():
     """Main workflow for cleaning and displaying data."""
