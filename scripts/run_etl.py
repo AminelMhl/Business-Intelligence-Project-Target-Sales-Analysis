@@ -105,7 +105,7 @@ def main():
     print(final_merged_data.head())
 
 
-    output_path = "Business_Intelligence_project/data/processed/final_data.csv"
+    output_path = "./data/processed/final_data.csv"
     save_to_csv(final_merged_data, output_path)
     
     
