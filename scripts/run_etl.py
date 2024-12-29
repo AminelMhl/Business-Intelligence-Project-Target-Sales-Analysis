@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from transform.clean_data import clean_data
 from extract.reads_local_files import customers, order_items, payments, orders, sellers, products
 from transform.join_datasets import join_datasets
@@ -106,6 +107,12 @@ def main():
 
     output_path = "Business_Intelligence_project/data/processed/final_data.csv"
     save_to_csv(final_merged_data, output_path)
+    
+    
+    dwh_connection_string = os.environ.get('DWH_CONNECTION_STRING')
+    
+    load_to_dwh(final_merged_data, dwh_connection_string, table_name="final_data")
+    
 
 
     # final_merged_data.to_csv("Business_Intelligence_project/data/processed/final_data.csv", index=False)
