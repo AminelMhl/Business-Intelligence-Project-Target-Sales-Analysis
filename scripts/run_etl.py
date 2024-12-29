@@ -109,9 +109,11 @@ def main():
     save_to_csv(final_merged_data, output_path)
     
     
-    dwh_connection_string = os.environ.get('DWH_CONNECTION_STRING')
+    dwh_connection_string = "sqlite:///./data/processed/final_data.db"
     
+    print(f"DWH Connection String: {dwh_connection_string}")
     load_to_dwh(final_merged_data, dwh_connection_string, table_name="final_data")
+    print(os.path.exists(dwh_connection_string))
     
 
 
