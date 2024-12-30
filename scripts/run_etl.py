@@ -17,7 +17,7 @@ def main():
         dtype_conversions=None
     )
     print(cleaned_customers.head())
-    output_path = "./Step 3/Modeling/customer_dimension.csv"
+    output_path = "./Modeling and Storage/Modeling/customer_dimension.csv"
     save_to_csv(cleaned_customers, output_path)
     
     # Step 2: Clean order items data
@@ -38,7 +38,7 @@ def main():
     unique_payments['payment_type_id'] = range(1, len(unique_payments) + 1)
     unique_payments = unique_payments[['payment_type_id', 'payment_type']]
     print(unique_payments.head())
-    output_path = "./Step 3/Modeling/payment_dimension.csv"
+    output_path = "./Modeling and Storage/Modeling/payment_dimension.csv"
     save_to_csv(unique_payments, output_path)
     
     # Step 4: Update orders data to refer to payments primary key
@@ -69,7 +69,7 @@ def main():
         dtype_conversions=None
     )
     print(cleaned_sellers.head())
-    output_path = "./Step 3/Modeling/seller_dimension.csv"
+    output_path = "./Modeling and Storage/Modeling/seller_dimension.csv"
     save_to_csv(cleaned_sellers, output_path)
     
     # Step 6: Clean products data
@@ -85,7 +85,7 @@ def main():
         dtype_conversions=None
     )
     print(cleaned_products.head())
-    output_path = "./Step 3/Modeling/product_dimension.csv"
+    output_path = "./Modeling and Storage/Modeling/product_dimension.csv"
     save_to_csv(cleaned_products, output_path)
 
     # Step 7: Join datasets
@@ -93,7 +93,7 @@ def main():
     # Join orders with order items
     orders_with_order_items = join_datasets(cleaned_orders, cleaned_order_items, on_column="order_id", how="inner")
     print(orders_with_order_items.head())
-    output_path= "./Step 3/Modeling/fact_order.csv"
+    output_path= "./Modeling and Storage/Modeling/fact_order.csv"
     save_to_csv(orders_with_order_items, output_path)
     # Join orders with customers
     orders_with_customers = join_datasets(cleaned_orders, cleaned_customers, on_column="customer_id", how="inner")
