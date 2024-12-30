@@ -1,5 +1,3 @@
-import pandas as pd
-import os
 from transform.clean_data import clean_data
 from extract.reads_local_files import customers, order_items, payments, orders, sellers, products
 from transform.join_datasets import join_datasets
@@ -36,24 +34,25 @@ def main():
     
     # Step 3: Clean payments data
     print("\n--- Cleaning Payments Data ---")
-    cleaned_payments = clean_data(
-        payments,
-        fill_value=0,
-        columns_to_drop=["payment_sequential", "payment_installments", "payment_value"]
-    )
-    print(cleaned_payments.head())
-    print(cleaned_customers.head())
+    unique_payments = payments[['payment_type']].drop_duplicates().reset_index(drop=True)
+    unique_payments['payment_type_id'] = range(1, len(unique_payments) + 1)
+    unique_payments = unique_payments[['payment_type_id', 'payment_type']]
+    print(unique_payments.head())
     output_path = "./Step 3/Modeling/payment_dimension.csv"
-    save_to_csv(cleaned_payments, output_path)
+    save_to_csv(unique_payments, output_path)
     
-    # Step 4: Clean orders data
+    # Step 4: Update orders data to refer to payments primary key
+    print("\n--- Updating Orders Data ---")
+    orders2 = orders.merge(payments[['order_id', 'payment_type']], on='order_id', how='left')
+    orders3 = orders2.merge(unique_payments, on='payment_type', how='left')
     print("\n--- Cleaning Orders Data ---")
     cleaned_orders = clean_data(
-        orders,
+        orders3,
         fill_value=0,
         columns_to_drop=[
             "order_status", "order_purchase_timestamp", "order_approved_at",
-            "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"
+            "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date",
+            "payment_type"
         ],
         outlier_columns=None,
         dtype_conversions=None
@@ -105,7 +104,7 @@ def main():
     print(orders_with_items.head())
 
     # Join payments with orders
-    orders_with_payments = join_datasets(orders_with_items, cleaned_payments, on_column="order_id", how="inner")
+    orders_with_payments = join_datasets(orders_with_items, unique_payments, on_column="payment_type_id", how="inner")
     print(orders_with_payments.head())
 
     # Join products with order items
@@ -117,24 +116,13 @@ def main():
     print("\n--- Final Merged Data ---")
     print(final_merged_data.head())
 
-
     output_path = "./data/processed/final_data.csv"
     save_to_csv(final_merged_data, output_path)
-    
     
     dwh_connection_string = "sqlite:///./data/processed/final_data.db"
     
     print(f"DWH Connection String: {dwh_connection_string}")
     load_to_dwh(final_merged_data, dwh_connection_string, table_name="final_data")
-    
 
-
-    # final_merged_data.to_csv("Business_Intelligence_project/data/processed/final_data.csv", index=False)
-    # print("Final cleaned data exported to 'data/processed/final_data.csv'")
-    # output_path = "Business_Intelligence_project/data/processed/final_data.xlsx"
-    # save_to_excel(final_merged_data, output_path)
-
-
-# Run the workflow
 if __name__ == "__main__":
     main()
