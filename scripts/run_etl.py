@@ -14,33 +14,37 @@ def main():
     cleaned_customers = clean_data(
         customers,
         fill_value=0,
-        columns_to_drop=["customer_zip_code_prefix", "customer_state"],
+        columns_to_drop=["customer_zip_code_prefix", "customer_unique_id"], 
         outlier_columns=None,
         dtype_conversions=None
     )
     print(cleaned_customers.head())
+    output_path = "./Step 3/Modeling/customer_dimension.csv"
+    save_to_csv(cleaned_customers, output_path)
     
     # Step 2: Clean order items data
     print("\n--- Cleaning Order Items Data ---")
     cleaned_order_items = clean_data(
         order_items,
         fill_value=0,
-        columns_to_drop=["shipping_limit_date", "freight_value"],
+        columns_to_drop=["shipping_limit_date", "freight_value", "order_item_id"],
         outlier_columns=["price"] if "price" in order_items.columns else None,
-        dtype_conversions={"order_item_id": "int", "price": "float"}
+        dtype_conversions={"price": "float"}
     )
     print(cleaned_order_items.head())
+    print(cleaned_customers.head())
     
     # Step 3: Clean payments data
     print("\n--- Cleaning Payments Data ---")
     cleaned_payments = clean_data(
         payments,
         fill_value=0,
-        columns_to_drop=["payment_sequential", "payment_installments"],
-        outlier_columns=["payment_value"] if "payment_value" in payments.columns else None,
-        dtype_conversions={"payment_value": "float"}
+        columns_to_drop=["payment_sequential", "payment_installments", "payment_value"]
     )
     print(cleaned_payments.head())
+    print(cleaned_customers.head())
+    output_path = "./Step 3/Modeling/payment_dimension.csv"
+    save_to_csv(cleaned_payments, output_path)
     
     # Step 4: Clean orders data
     print("\n--- Cleaning Orders Data ---")
@@ -61,11 +65,13 @@ def main():
     cleaned_sellers = clean_data(
         sellers,
         fill_value=0,
-        columns_to_drop=["seller_zip_code_prefix", "seller_state"],
+        columns_to_drop=["seller_zip_code_prefix"],
         outlier_columns=None,
         dtype_conversions=None
     )
     print(cleaned_sellers.head())
+    output_path = "./Step 3/Modeling/seller_dimension.csv"
+    save_to_csv(cleaned_sellers, output_path)
     
     # Step 6: Clean products data
     print("\n--- Cleaning Products Data ---")
@@ -80,9 +86,16 @@ def main():
         dtype_conversions=None
     )
     print(cleaned_products.head())
+    output_path = "./Step 3/Modeling/product_dimension.csv"
+    save_to_csv(cleaned_products, output_path)
 
     # Step 7: Join datasets
     print("\n--- Joining Datasets ---")
+    # Join orders with order items
+    orders_with_order_items = join_datasets(cleaned_orders, cleaned_order_items, on_column="order_id", how="inner")
+    print(orders_with_order_items.head())
+    output_path= "./Step 3/Modeling/fact_order.csv"
+    save_to_csv(orders_with_order_items, output_path)
     # Join orders with customers
     orders_with_customers = join_datasets(cleaned_orders, cleaned_customers, on_column="customer_id", how="inner")
     print(orders_with_customers.head())
