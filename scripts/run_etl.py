@@ -2,6 +2,7 @@ from transform.clean_data import clean_data
 from extract.reads_local_files import customers, order_items, payments, orders, sellers, products
 from transform.join_datasets import join_datasets
 from load.save_to_csv import save_to_csv
+from load.save_to_excel import save_to_excel
 from load.load_to_dwh import load_to_dwh
 
 def main():
@@ -19,6 +20,8 @@ def main():
     print(cleaned_customers.head())
     output_path = "./Modeling and Storage/Modeling/customer_dimension.csv"
     save_to_csv(cleaned_customers, output_path)
+    output_path = "./Modeling and Storage/Modeling/dimensions excel_format/customer_dimension.xlsx"
+    save_to_excel(cleaned_customers, output_path)
     
     # Step 2: Clean order items data
     print("\n--- Cleaning Order Items Data ---")
@@ -40,6 +43,8 @@ def main():
     print(unique_payments.head())
     output_path = "./Modeling and Storage/Modeling/payment_dimension.csv"
     save_to_csv(unique_payments, output_path)
+    output_path = "./Modeling and Storage/Modeling/dimensions excel_format/payment_dimension.xlsx"
+    save_to_excel(unique_payments, output_path)
     
     # Step 4: Update orders data to refer to payments primary key
     print("\n--- Updating Orders Data ---")
@@ -71,6 +76,8 @@ def main():
     print(cleaned_sellers.head())
     output_path = "./Modeling and Storage/Modeling/seller_dimension.csv"
     save_to_csv(cleaned_sellers, output_path)
+    output_path = "./Modeling and Storage/Modeling/dimensions excel_format/seller_dimension.xlsx"
+    save_to_excel(cleaned_sellers, output_path)
     
     # Step 6: Clean products data
     print("\n--- Cleaning Products Data ---")
@@ -87,6 +94,8 @@ def main():
     print(cleaned_products.head())
     output_path = "./Modeling and Storage/Modeling/product_dimension.csv"
     save_to_csv(cleaned_products, output_path)
+    output_path = "./Modeling and Storage/Modeling/dimensions excel_format/product_dimension.xlsx"
+    save_to_excel(cleaned_products, output_path)
 
     # Step 7: Join datasets
     print("\n--- Joining Datasets ---")
@@ -95,6 +104,9 @@ def main():
     print(orders_with_order_items.head())
     output_path= "./Modeling and Storage/Modeling/fact_order.csv"
     save_to_csv(orders_with_order_items, output_path)
+    output_path = "./Modeling and Storage/Modeling/dimensions excel_format/fact_order.xlsx"
+    save_to_excel(orders_with_order_items, output_path)
+    
     # Join orders with customers
     orders_with_customers = join_datasets(cleaned_orders, cleaned_customers, on_column="customer_id", how="inner")
     print(orders_with_customers.head())
@@ -118,6 +130,9 @@ def main():
 
     output_path = "./data/processed/final_data.csv"
     save_to_csv(final_merged_data, output_path)
+
+    output_path = "./data/processed/final_data.xlsx"
+    save_to_excel(final_merged_data, output_path)
     
     dwh_connection_string = "sqlite:///./data/processed/final_data.db"
     
