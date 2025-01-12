@@ -37,7 +37,7 @@ def main():
     
     # Step 3: Clean payments data
     print("\n--- Cleaning Payments Data ---")
-    unique_payments = payments[['payment_type']].drop_duplicates().reset_index(drop=True)
+    unique_payments = payments[['payment_type']].replace('not_defined', 'other').drop_duplicates().reset_index(drop=True)
     unique_payments['payment_type_id'] = range(1, len(unique_payments) + 1)
     unique_payments = unique_payments[['payment_type_id', 'payment_type']]
     print(unique_payments.head())
@@ -83,7 +83,7 @@ def main():
     print("\n--- Cleaning Products Data ---")
     cleaned_products = clean_data(
         products,
-        fill_value=0,
+        fill_value='other',
         columns_to_drop=[
             "product_name_length", "product_description_length", "product_photos_qty",
             "product_weight_g", "product_length_cm", "product_height_cm", "product_width_cm"

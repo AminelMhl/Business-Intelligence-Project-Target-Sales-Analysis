@@ -3,4 +3,4 @@ payment_type_id,payment_type
 2,UPI
 3,voucher
 4,debit_card
-5,not_defined
+5,other
